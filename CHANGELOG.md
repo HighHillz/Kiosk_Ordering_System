@@ -4,7 +4,7 @@ All notable changes to this project will be noted here.
 
 ---
 
-# [2.0.0] - 25 Jan 2026
+# [2.0.0] - Coming Soon
 Second version of this application (a web application)
 ## Added
 - Full-stack web architecture using FastAPI (Backend) and React (Frontend).
