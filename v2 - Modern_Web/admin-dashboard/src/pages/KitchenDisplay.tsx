@@ -64,10 +64,12 @@ const KitchenDisplay: React.FC = () => {
     };
 
     const getElapsedTime = (dateString: string) => {
-        const start = new Date(dateString).getTime();
+        // Appending 'Z' to treat as UTC if missing, as backend stores UTC
+        const utcDateString = dateString.endsWith('Z') ? dateString : dateString + 'Z';
+        const start = new Date(utcDateString).getTime();
         const now = new Date().getTime();
         const diff = Math.floor((now - start) / 60000); // minutes
-        return diff;
+        return diff > 0 ? diff : 0;
     };
 
     const getStatusColor = (status: string) => {

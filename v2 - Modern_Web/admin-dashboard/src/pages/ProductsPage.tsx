@@ -71,6 +71,22 @@ const ProductsPage: React.FC = () => {
         }
     };
 
+    const [currency, setCurrency] = useState('$');
+
+    useEffect(() => {
+        const fetchBrandConfig = async () => {
+            try {
+                const response = await api.get('/brand/settings');
+                if (response.data.currency_symbol) {
+                    setCurrency(response.data.currency_symbol);
+                }
+            } catch (error) {
+                console.error('Error fetching brand config:', error);
+            }
+        };
+        fetchBrandConfig();
+    }, []);
+
     const handleOpenDialog = (item?: MenuItemType) => {
         if (item) {
             setEditingItem(item);
@@ -212,15 +228,15 @@ const ProductsPage: React.FC = () => {
                                     {item.discount_percentage && item.discount_percentage > 0 ? (
                                         <>
                                             <Typography variant="body2" sx={{ textDecoration: 'line-through', color: 'text.secondary' }}>
-                                                ${item.price}
+                                                {currency}{item.price}
                                             </Typography>
                                             <Typography variant="h6" color="error" fontWeight="bold">
-                                                ${calculateDiscountedPrice(Number(item.price), item.discount_percentage).toFixed(2)}
+                                                {currency}{calculateDiscountedPrice(Number(item.price), item.discount_percentage).toFixed(2)}
                                             </Typography>
                                         </>
                                     ) : (
                                         <Typography variant="h6" fontWeight="bold" color="primary">
-                                            ${item.price}
+                                            {currency}{item.price}
                                         </Typography>
                                     )}
                                 </Box>
@@ -259,7 +275,7 @@ const ProductsPage: React.FC = () => {
                             fullWidth
                         />
                         <TextField
-                            label="Price ($)"
+                            label={`Price (${currency})`}
                             type="number"
                             value={formData.price}
                             onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}

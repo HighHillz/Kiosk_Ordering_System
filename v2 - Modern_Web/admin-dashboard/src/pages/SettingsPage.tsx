@@ -21,6 +21,7 @@ const SettingsPage: React.FC = () => {
         primary_color: '#6366F1',
         secondary_color: '#EC4899',
         font_family: 'Inter',
+        currency_symbol: '$',
     });
 
     const [snackbar, setSnackbar] = useState({
@@ -89,7 +90,7 @@ const SettingsPage: React.FC = () => {
 
             <Grid container spacing={3}>
                 {/* Logo Section */}
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <Paper sx={{ p: 3 }}>
                         <Typography variant="h6" gutterBottom fontWeight="bold">
                             Restaurant Logo
@@ -113,7 +114,7 @@ const SettingsPage: React.FC = () => {
                 </Grid>
 
                 {/* Theme Colors */}
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <Paper sx={{ p: 3 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                             <Palette />
@@ -202,7 +203,7 @@ const SettingsPage: React.FC = () => {
                 </Grid>
 
                 {/* Font Family */}
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                     <Paper sx={{ p: 3 }}>
                         <Typography variant="h6" gutterBottom fontWeight="bold">
                             Typography
@@ -218,8 +219,25 @@ const SettingsPage: React.FC = () => {
                     </Paper>
                 </Grid>
 
+                {/* Currency */}
+                <Grid size={{ xs: 12 }}>
+                    <Paper sx={{ p: 3 }}>
+                        <Typography variant="h6" gutterBottom fontWeight="bold">
+                            Regional Settings
+                        </Typography>
+                        <Divider sx={{ mb: 3 }} />
+                        <TextField
+                            label="Currency Symbol"
+                            value={config.currency_symbol || '$'}
+                            onChange={(e) => setConfig({ ...config, currency_symbol: e.target.value })}
+                            fullWidth
+                            helperText="e.g., $, ₹, €, £"
+                        />
+                    </Paper>
+                </Grid>
+
                 {/* Preview */}
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                     <Paper sx={{ p: 3, bgcolor: config.primary_color || '#6366F1', color: 'white' }}>
                         <Typography variant="h5" fontWeight="bold" sx={{ fontFamily: config.font_family || 'Inter' }}>
                             Preview: This is how your branding will look
@@ -234,7 +252,7 @@ const SettingsPage: React.FC = () => {
                 </Grid>
 
                 {/* Save Button */}
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                     <Button
                         variant="contained"
                         size="large"

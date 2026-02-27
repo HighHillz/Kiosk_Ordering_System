@@ -19,4 +19,17 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+// Handle 401 unauthorized responses
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            // Token expired or invalid
+            localStorage.removeItem('token');
+            window.location.href = '/';
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default api;
