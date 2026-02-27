@@ -1,71 +1,32 @@
-# Node.js
+# Python-specifics
+**/__pycache__/
+*.pyc
+venv/
+.venv/
+**/*.py[cod]
+**/*$py.class
+**/.pytest_cache/
+
+# Web-specifics
 **/node_modules/
 **/build/
 **/dist/
 **/coverage/
-.npm
-**/.eslintcache
-**/.stylelintcache
-**/.parcel-cache
-**/.next/
-**/.nuxt/
-**/.vuepress/dist
-**/npm-debug.log*
-**/yarn-debug.log*
-**/yarn-error.log*
-**/lerna-debug.log*
-
-# Python
-**/__pycache__/
-**/*.py[cod]
-**/*$py.class
-**/.pytest_cache/
-**/.coverage
-**/htmlcov/
-**/.tox/
-**/.nosetcripts/
-**/.venv/
-**/venv/
-**/ENV/
-**/env/
-**/*.bak
-**/*.swp
-
-# Environment Files
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
 **/.env
-**/.env.local
+.env.local
+**/.eslintcache
+**/.next/
 
-# OS Files
+# Docker/System
 .DS_Store
-.DS_Store?
-**/._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+*.log
+.docker/
+v2/db_data/
+v2/redis_data/
 
 # IDEs/Editors
 .vscode/
 .idea/
 *.swp
 *.swo
-.project
-.settings/
-.classpath
-.factorypath
-
-# Project Specific
-backend/uploads/*
-!backend/uploads/.gitkeep
-worker.log
-db_data/
-redis_data/
-*.log
-
-# Docker
-.docker/
