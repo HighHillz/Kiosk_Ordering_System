@@ -16,17 +16,30 @@ This is the original desktop-based version of the Kiosk Ordering System, built w
 - **Database**: MySQL Server
 - **Dependencies**: See `requirements.txt`
 
-## Installation
-```bash
-pip install -r requirements.txt
-```
+## 🚀 Installation & Setup
 
-## Running the Original Application
-1. **Database Setup**: Ensure your MySQL server is running and the `Restaurant` database is initialized.
-2. **Main Application**: Run the UI script to start the desktop interface:
+1. **Clone the environment**:
    ```bash
-   python ui.py
+   pip install -r requirements.txt
    ```
+
+2. **Configure Environment Variables**:
+   Create a `.env` file in this directory based on `.env.example`:
+   ```env
+   DB_HOST=localhost
+   DB_USER=your_username
+   DB_PASSWORD=your_password
+   ```
+
+3. **Initialize Database**:
+   The application will attempt to create the `Restaurant` database on first run, but ensure your MySQL service is active.
+
+## 🖥️ Running the Application
+
+Launch the main graphical interface:
+```bash
+python ui.py
+```
 3. **Legacy Scripts**: `script.py` contains the original logic and helper functions used during development.
 
 ---

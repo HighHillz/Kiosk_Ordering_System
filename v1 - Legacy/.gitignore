@@ -1,0 +1,6 @@
+# V1 Legacy Specific Ignores
+libs/
+venv/
+.env
+*.log
+__pycache__/
