@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { Close, Add, Remove, DeleteOutline, ArrowForward } from '@mui/icons-material';
 import { useCart } from '../context/CartContext';
+import { useCustomTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 
 interface CartDrawerProps {
@@ -25,6 +26,8 @@ interface CartDrawerProps {
 
 const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
     const { cart, updateQuantity, removeFromCart, totalAmount, totalItems, orderType } = useCart();
+    const { brandConfig } = useCustomTheme();
+    const currencySymbol = brandConfig?.currency_symbol || '$';
     const navigate = useNavigate();
 
     return (
@@ -69,7 +72,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
                                                 <Box sx={{ flexGrow: 1 }}>
                                                     <Typography fontWeight={700} variant="subtitle1">{item.name}</Typography>
                                                     <Typography variant="h6" color="primary.main" fontWeight={700} sx={{ mt: 0.5 }}>
-                                                        ${(finalPrice * item.quantity).toFixed(2)}
+                                                        {currencySymbol}{(finalPrice * item.quantity).toFixed(2)}
                                                     </Typography>
                                                 </Box>
                                             </Box>
@@ -105,7 +108,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <Typography variant="body1" color="text.secondary">Total Amount</Typography>
                                 <Typography variant="h5" fontWeight={800} color="primary.main">
-                                    ${totalAmount.toFixed(2)}
+                                    {currencySymbol}{totalAmount.toFixed(2)}
                                 </Typography>
                             </Box>
                             <Button

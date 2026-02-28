@@ -2,6 +2,9 @@
 
 This project evolved from a Grade 12 Python GUI (v1) to a containerized Full-Stack Web App (v2). It serves as a comprehensive demonstration of how a legacy desktop application can be modernized into a scalable web platform.
 
+![Latest Version](https://img.shields.io/badge/Latest%20Version-2.0.0-blue.svg)
+![License](https://img.shields.io/badge/License-MIT-black.svg)
+
 ## Project Structure
 
 This repository is organized into two main versions:

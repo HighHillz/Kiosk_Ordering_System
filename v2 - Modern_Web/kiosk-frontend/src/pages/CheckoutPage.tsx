@@ -27,10 +27,13 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import api from '../services/api';
 import Header from '../components/layout/Header';
+import { useCustomTheme } from '../context/ThemeContext';
 
 const CheckoutPage: React.FC = () => {
     const navigate = useNavigate();
     const { cart, totalAmount, orderType, clearCart } = useCart();
+    const { brandConfig } = useCustomTheme();
+    const currencySymbol = brandConfig?.currency_symbol || '$';
     const [paymentMethod, setPaymentMethod] = useState('CARD');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -139,7 +142,7 @@ const CheckoutPage: React.FC = () => {
                                                 {item.quantity}x {item.name}
                                             </Typography>
                                             <Typography variant="body2" fontWeight={600}>
-                                                ${(Number(item.price) * (1 - (item.discount_percentage || 0) / 100) * item.quantity).toFixed(2)}
+                                                {currencySymbol}{(Number(item.price) * (1 - (item.discount_percentage || 0) / 100) * item.quantity).toFixed(2)}
                                             </Typography>
                                         </Box>
                                     ))}
@@ -150,7 +153,7 @@ const CheckoutPage: React.FC = () => {
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
                                     <Typography variant="h6" fontWeight={700}>Total</Typography>
                                     <Typography variant="h5" fontWeight={800} color="primary.main">
-                                        ${totalAmount.toFixed(2)}
+                                        {currencySymbol}{totalAmount.toFixed(2)}
                                     </Typography>
                                 </Box>
 

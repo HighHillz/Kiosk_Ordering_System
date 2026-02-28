@@ -29,9 +29,12 @@ const KitchenDisplay: React.FC = () => {
             console.log('Fetched orders:', response.data); // Debug log
             // Filter ensuring we match the enum string values correctly
             const activeOrders = response.data.filter((order: Order) => {
-                // Backend returns "pending" (lowercase) from Enum, check case sensitivity just in case
                 const status = order.status.toLowerCase();
-                return status === 'pending' || status === 'preparing';
+                const isRecentStatus = status === 'pending' || status === 'preparing';
+
+                // Filter out very old orders (e.g., > 24 hours) to avoid "huge" times
+                const elapsed = getElapsedTime(order.created_at);
+                return isRecentStatus && elapsed < 1440;
             });
             console.log('Active orders:', activeOrders);
             setOrders(activeOrders);
@@ -64,12 +67,19 @@ const KitchenDisplay: React.FC = () => {
     };
 
     const getElapsedTime = (dateString: string) => {
-        // Appending 'Z' to treat as UTC if missing, as backend stores UTC
-        const utcDateString = dateString.endsWith('Z') ? dateString : dateString + 'Z';
-        const start = new Date(utcDateString).getTime();
-        const now = new Date().getTime();
-        const diff = Math.floor((now - start) / 60000); // minutes
-        return diff > 0 ? diff : 0;
+        try {
+            // Appending 'Z' to treat as UTC if missing, as backend stores UTC
+            const utcDateString = dateString.endsWith('Z') ? dateString : dateString + 'Z';
+            const start = new Date(utcDateString).getTime();
+            const now = new Date().getTime();
+
+            if (isNaN(start)) return 0;
+
+            const diff = Math.floor((now - start) / 60000); // minutes
+            return diff > 0 ? diff : 0;
+        } catch (e) {
+            return 0;
+        }
     };
 
     const getStatusColor = (status: string) => {

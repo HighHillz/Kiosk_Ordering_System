@@ -70,6 +70,7 @@ async def create_order(
     # Generate a short unique order number
     order_number = str(uuid.uuid4().hex[:6]).upper()
     
+    from datetime import timezone
     # Create order record
     new_order = Order(
         tenant_id=tenant_id,
@@ -77,7 +78,7 @@ async def create_order(
         total_amount=order_data.total_amount,
         status=OrderStatus.PENDING,
         payment_status=PaymentStatus.PAID if order_data.payment_method != "CASH" else PaymentStatus.UNPAID,
-        created_at=datetime.utcnow()
+        created_at=datetime.now(timezone.utc)
     )
     
     db.add(new_order)

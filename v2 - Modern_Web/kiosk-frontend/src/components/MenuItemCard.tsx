@@ -10,8 +10,9 @@ import {
     IconButton,
 } from '@mui/material';
 import { Add, LocalOffer, InfoOutlined } from '@mui/icons-material';
-import { MenuItem } from '../types';
+import { MenuItem, BrandConfig } from '../types';
 import { useCart } from '../context/CartContext';
+import { useCustomTheme } from '../context/ThemeContext';
 
 interface MenuItemCardProps {
     item: MenuItem;
@@ -19,6 +20,8 @@ interface MenuItemCardProps {
 
 const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
     const { addToCart } = useCart();
+    const { brandConfig } = useCustomTheme();
+    const currencySymbol = brandConfig?.currency_symbol || '$';
 
     const finalPrice = item.discount_percentage
         ? Number(item.price) * (1 - item.discount_percentage / 100)
@@ -117,15 +120,15 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
                         {item.discount_percentage ? (
                             <>
                                 <Typography variant="caption" sx={{ textDecoration: 'line-through', color: 'text.secondary' }}>
-                                    ${Number(item.price).toFixed(2)}
+                                    {currencySymbol}{Number(item.price).toFixed(2)}
                                 </Typography>
                                 <Typography variant="h6" color="primary" sx={{ fontWeight: 800 }}>
-                                    ${finalPrice.toFixed(2)}
+                                    {currencySymbol}{finalPrice.toFixed(2)}
                                 </Typography>
                             </>
                         ) : (
                             <Typography variant="h6" color="primary" sx={{ fontWeight: 800 }}>
-                                ${Number(item.price).toFixed(2)}
+                                {currencySymbol}{Number(item.price).toFixed(2)}
                             </Typography>
                         )}
                     </Box>

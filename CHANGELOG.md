@@ -6,7 +6,7 @@ All notable changes to this project will be noted here.
 
 ## [Modern Web - V2]
 
-### [2.0.0] - Coming Soon
+### [2.0.0] - 28 Feb 2026
 Transition from monolithic Python GUI to modern full-stack architecture.
 - **Added**: FastAPI Backend, React Frontend (Kiosk & Admin), Dockerization, Nginx API Gateway, Redis Caching, Multi-tenancy.
 - **Modified**: Migrated core logic to REST API, standardized error handling.
@@ -16,7 +16,7 @@ Transition from monolithic Python GUI to modern full-stack architecture.
 
 ## [Legacy - V1]
 
-### [1.3.1] - 28 Feb 2026
+### [1.3.1] - 27 Feb 2026
 - **Fixed**: Refactored code for efficient memory usage and enhanced readability.
 
 ### [1.3.0] - 19 Jun 2025

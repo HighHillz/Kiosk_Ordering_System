@@ -23,6 +23,7 @@ export interface BrandConfig {
     primary_color: string | null;
     secondary_color: string | null;
     font_family: string | null;
+    currency_symbol?: string | null;
 }
 
 export interface CartItem extends MenuItem {
