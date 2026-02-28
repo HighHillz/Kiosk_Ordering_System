@@ -4,6 +4,11 @@ import customtkinter as ctk
 
 import script
 
+PREVIOUS_ORDERS = "Previous Orders"
+SUCCESS_MSG = "Success!"
+BACK_TO_DASHBOARD = "Back to Dashboard"
+
+
 class BaseWindow:
     def __init__(self, width, height, window_title="", is_popup=False, base_window=None):
         self.width = width
@@ -90,11 +95,11 @@ class HomePage:
         customer_but.pack(pady=10)
     
 class LoginPage:
-    def __init__(self, Type):
-        self.Type = Type
+    def __init__(self, user_type):
+        self.user_type = user_type
         self.show_passwd = False
-        self.accounts = script.Account(self.Type)
-        main_window.rename_window_title(f"{self.Type}: Login")
+        self.accounts = script.Account(self.user_type)
+        main_window.rename_window_title(f"{self.user_type}: Login")
         self.setup_login_ui()
     
     def setup_login_ui(self):
@@ -159,7 +164,7 @@ class LoginPage:
     def verify_login(self, username, password):
         if self.accounts.username_exists(username):
             if self.accounts.verify_login(username, password):
-                Dashboard(self.Type, username)
+                Dashboard(self.user_type, username)
             else:
                 self.message_label.config(text="Incorrect password. Please try again", fg="#ff7b6f")
         else:
@@ -192,31 +197,31 @@ class LoginPage:
                     self.accounts.create_account(username, password, phone, email)
                     self.message_label.config(text=f"An account for {username} has been created!", fg="green")
                 else:
-                    self.message_label.config(text=f"Invalid email address!", fg="#ff7b6f")
+                    self.message_label.config(text="Invalid email address!", fg="#ff7b6f")
             else:
-                self.message_label.config(text=f"Invalid phone number!", fg="#ff7b6f")
+                self.message_label.config(text="Invalid phone number!", fg="#ff7b6f")
         else:
             self.message_label.config(text=f"An account for {username} already exists!", fg="#ff7b6f")
 
 class Dashboard:
-    def __init__(self, Type, username):
-        self.Type = Type
-        self.username = script.Account(self.Type).get_account_detail(username, self.Type)[0]
-        main_window.rename_window_title(f"{self.Type}: Dashboard")
+    def __init__(self, user_type, username):
+        self.user_type = user_type
+        self.username = script.Account(self.user_type).get_account_detail(username, self.user_type)[0]
+        main_window.rename_window_title(f"{self.user_type}: Dashboard")
         self.setup_ui()
     
     def setup_ui(self):
         main_window.destroy_objects()
 
         tk.Button(main_window.window, text="Profile", cursor="hand2",
-            bg="#393939", fg="white", font=("Consolas", 10), activebackground="black", activeforeground="#E8E8E8", command=lambda: ProfilePopup(self.Type, self.username)).place(x=main_window.get_width()-70, y=10)
+            bg="#393939", fg="white", font=("Consolas", 10), activebackground="black", activeforeground="#E8E8E8", command=lambda: ProfilePopup(self.user_type, self.username)).place(x=main_window.get_width()-70, y=10)
         
         self.dashboard_frame = tk.Frame(main_window.window, bg="#1e1e1e")
         self.dashboard_frame.place(relx=0.5, rely=0.5, anchor="center")
 
         tk.Label(self.dashboard_frame, text=f"Welcome {self.username}!", font=("Consolas", 16), bg="#1e1e1e", fg="#E8E8E8").pack(pady=20)
 
-        self.customer_functions() if self.Type == 'Customer' else self.admin_functions()
+        self.customer_functions() if self.user_type == 'Customer' else self.admin_functions()
     
     def customer_functions(self):
         order_page_but = tk.Button(
@@ -227,8 +232,8 @@ class Dashboard:
 
         # Previous Orders button
         order_hist_but = tk.Button(
-            self.dashboard_frame, text="Previous Orders", width=20, height=2, cursor="hand2",
-            bg="teal", fg="white", font=("Consolas", 12, "bold"), activebackground="black", activeforeground="#E8E8E8", command=lambda: HistoryPage(self.Type, self.username)
+            self.dashboard_frame, text=PREVIOUS_ORDERS, width=20, height=2, cursor="hand2",
+            bg="teal", fg="white", font=("Consolas", 12, "bold"), activebackground="black", activeforeground="#E8E8E8", command=lambda: HistoryPage(self.user_type, self.username)
         )
         order_hist_but.pack(pady=10)
     
@@ -242,15 +247,15 @@ class Dashboard:
 
         # Previous Orders button
         order_hist_but = tk.Button(
-            self.dashboard_frame, text="Previous Orders", width=20, height=2, cursor="hand2",
-            bg="teal", fg="white", font=("Consolas", 12, "bold"), activebackground="black", activeforeground="#E8E8E8", command=lambda: HistoryPage(self.Type, self.username)
+            self.dashboard_frame, text=PREVIOUS_ORDERS, width=20, height=2, cursor="hand2",
+            bg="teal", fg="white", font=("Consolas", 12, "bold"), activebackground="black", activeforeground="#E8E8E8", command=lambda: HistoryPage(self.user_type, self.username)
         )
         order_hist_but.pack(pady=10)
         
         # Customers Book button
         customers_book_but = tk.Button(
             self.dashboard_frame, text="View Customers", width=20, height=2, cursor="hand2",
-            bg="teal", fg="white", font=("Consolas", 12, "bold"), activebackground="black", activeforeground="#E8E8E8", command=lambda: CustomerBookPage(self.Type, self.username)
+            bg="teal", fg="white", font=("Consolas", 12, "bold"), activebackground="black", activeforeground="#E8E8E8", command=lambda: CustomerBookPage(self.user_type, self.username)
         )
         customers_book_but.pack(pady=10)
 
@@ -263,10 +268,10 @@ class Dashboard:
         reports_but.pack(pady=10) """
 
 class ProfilePopup:
-    def __init__(self, Type, username):
-        self.Type = Type
+    def __init__(self, user_type, username):
+        self.user_type = user_type
         self.username = username
-        self.account = script.Account(self.Type)
+        self.account = script.Account(self.user_type)
         self.top = PopupWindow(300, 300, main_window.window, "")
         self.top.create_window()
         self.setup_ui()
@@ -291,11 +296,11 @@ class ProfilePopup:
         #self.setup_function_frames()
     
     def write_details(self):
-        details = self.account.get_account_detail(self.username, self.Type)
+        details = self.account.get_account_detail(self.username, self.user_type)
 
         tk.Label(self.details_frame, text=f"Username: {details[0]}", font=("Consolas", 12), bg="#1e1e1e", fg="#E8E8E8", anchor="w", justify="left").pack(anchor="w", fill="x")
         
-        tk.Label(self.details_frame, text=f"Role: {self.Type}", font=("Consolas", 12), bg="#1e1e1e", fg="#E8E8E8", anchor="w", justify="left").pack(anchor="w", fill="x")
+        tk.Label(self.details_frame, text=f"Role: {self.user_type}", font=("Consolas", 12), bg="#1e1e1e", fg="#E8E8E8", anchor="w", justify="left").pack(anchor="w", fill="x")
         
         tk.Label(self.details_frame, text=f"Phone: {details[3]}", font=("Consolas", 12), bg="#1e1e1e", fg="#E8E8E8", anchor="w", justify="left").pack(anchor="w", fill="x")
         
@@ -312,7 +317,7 @@ class ProfilePopup:
         tk.Button(
             self.panel_frame, text="Logout", width=7, height=1, cursor="hand2",
             bg="#f44336", fg="white", font=("Consolas", 10, "bold"),
-            command=lambda: LoginPage(self.Type), activebackground="black", activeforeground="#E8E8E8"
+            command=lambda: LoginPage(self.user_type), activebackground="black", activeforeground="#E8E8E8"
         ).grid(column=1, row=0, padx=(5, 0))
         
     def setup_function_frames(self):
@@ -343,7 +348,7 @@ class ProfilePopup:
         self.top.rename_window_title('Edit Account')
         self.top.destroy_objects()
 
-        details = self.account.get_account_detail(self.username, self.Type)
+        details = self.account.get_account_detail(self.username, self.user_type)
         
         self.details_frame = tk.Frame(self.top.window, bg="#1e1e1e")
         self.details_frame.pack(anchor="w", pady=(50, 20), padx=5)
@@ -389,16 +394,16 @@ class ProfilePopup:
         res = messagebox.askquestion("Edit Account", "Do you want to change your account details?")
 
         if res == "yes":
-            self.account.edit_account_detail(self.username, self.Type, self.password_var.get(), self.phone_var.get(), self.email_var.get())
-            res = messagebox.showinfo("Success!", "Account has been successfully edited!")
+            self.account.edit_account_detail(self.username, self.user_type, self.password_var.get(), self.phone_var.get(), self.email_var.get())
+            messagebox.showinfo(SUCCESS_MSG, "Account has been successfully edited!")
             self.setup_ui()
     
     def delete_account(self):
         res = messagebox.askquestion("WARNING!", "Deleting this account will permenantly erase all information related to the account, and is an irreversible process. Do you want to continue?")
 
         if res == "yes":
-            self.account.delete_account(self.username, self.Type)
-            res = messagebox.showinfo("Success!", "Account has been successfully deleted!")
+            self.account.delete_account(self.username, self.user_type)
+            messagebox.showinfo(SUCCESS_MSG, "Account has been successfully deleted!")
             HomePage()
 
 class OrderPage:
@@ -419,7 +424,7 @@ class OrderPage:
         
         # Add button to go back to the dashboard
         tk.Button(
-            main_window.window, text="Back to Dashboard", cursor="hand2", bg="#393939", fg="white", font=("Consolas", 10), activebackground="black", activeforeground="#E8E8E8", command=lambda: Dashboard('Customer', self.username)
+            main_window.window, text=BACK_TO_DASHBOARD, cursor="hand2", bg="#393939", fg="white", font=("Consolas", 10), activebackground="black", activeforeground="#E8E8E8", command=lambda: Dashboard('Customer', self.username)
         ).place(x=10, y=10)
 
         self.list_categories()
@@ -569,43 +574,43 @@ class PaymentPopup:
     
     def setup_ui(self):
         if self.order.get_order_list():
-            self.payPage = PopupWindow(300, 200, main_window.window, 'Confirm Payment')
-            self.payPage.create_window()
+            self.pay_page = PopupWindow(300, 200, main_window.window, 'Confirm Payment')
+            self.pay_page.create_window()
 
             # Display amount to be paid
-            tk.Message(self.payPage.window, width=200, text=f"Amount to pay: ₹{self.order.get_total_amount()}", font=('Consolas', 10), fg="#E8E8E8", bg="#1e1e1e").pack(pady=10)
+            tk.Message(self.pay_page.window, width=200, text=f"Amount to pay: ₹{self.order.get_total_amount()}", font=('Consolas', 10), fg="#E8E8E8", bg="#1e1e1e").pack(pady=10)
             
             # Pay button
             tk.Button(
-                self.payPage.window, cursor="hand2", text="Pay", command=lambda: self.complete_payment(),
+                self.pay_page.window, cursor="hand2", text="Pay", command=lambda: self.complete_payment(),
                 bg="green", fg="white", font=("Consolas", 10), activebackground="black", activeforeground="#E8E8E8"
             ).pack(pady=10)
 
-            self.payPage.run()
+            self.pay_page.run()
         else:
             messagebox.showerror('Error', 'Your order list is empty!')
     
     def complete_payment(self):
-        self.payPage.destroy_objects()
+        self.pay_page.destroy_objects()
         self.order.update_purchase()
 
-        tk.Label(self.payPage.window, text="Payment successful!", fg="#E8E8E8", bg="#1e1e1e", font=("Consolas", 12)).pack(pady=50)
+        tk.Label(self.pay_page.window, text="Payment successful!", fg="#E8E8E8", bg="#1e1e1e", font=("Consolas", 12)).pack(pady=50)
 
         tk.Button(
-            self.payPage.window, text="Okay", command=self.go_back,
+            self.pay_page.window, text="Okay", command=self.go_back,
             font=("Consolas", 10), bg="green", fg="white", cursor="hand2", activebackground="black", activeforeground="#E8E8E8"
         ).pack(pady=10)
     
     def go_back(self):
         OrderPage(self.username)
-        self.payPage.destroy_self()
+        self.pay_page.destroy_self()
 
 class HistoryPage:
-    def __init__(self, Type, username):
+    def __init__(self, user_type, username):
         self.username = username
-        self.Type = Type
-        self.history = script.History(self.Type)
-        main_window.rename_window_title(f'Previous Orders')
+        self.user_type = user_type
+        self.history = script.History(self.user_type)
+        main_window.rename_window_title(PREVIOUS_ORDERS)
         self.setup_ui()
     
     def setup_ui(self):
@@ -613,11 +618,11 @@ class HistoryPage:
 
         # Add button to go back to the dashboard
         tk.Button(
-            main_window.window, text="Back to Dashboard", cursor="hand2", bg="#393939", fg="white", font=("Consolas", 10), activebackground="black", activeforeground="#E8E8E8", command=lambda: Dashboard(self.Type, self.username)
+            main_window.window, text=BACK_TO_DASHBOARD, cursor="hand2", bg="#393939", fg="white", font=("Consolas", 10), activebackground="black", activeforeground="#E8E8E8", command=lambda: Dashboard(self.user_type, self.username)
         ).place(x=10, y=10)
 
         # Title label below the button
-        tk.Label(main_window.window, text="Previous Orders", font=("Consolas", 16), bg="#1e1e1e", fg="#e8e8e8").pack(pady=(50, 20))
+        tk.Label(main_window.window, text=PREVIOUS_ORDERS, font=("Consolas", 16), bg="#1e1e1e", fg="#e8e8e8").pack(pady=(50, 20))
 
         log_window = ctk.CTkScrollableFrame(main_window.window, width=main_window.get_width()-150, height=400)
         log_window.pack()
@@ -628,14 +633,14 @@ class HistoryPage:
         # Define the column headers
         headers = ["Item", "Quantity", "Total Amount", "Date"] 
 
-        headers.insert(0, "Username") if self.Type == 'Admin' else 0
+        headers.insert(0, "Username") if self.user_type == 'Admin' else 0
 
         # Add headers to the log frame
         for col in range(len(headers)):
             tk.Label(self.log_frame, text=headers[col], width=18, font=("Consolas", 12, "bold"), 
                     fg="#e8e8e8", bg="#333333", borderwidth=1, relief='ridge').grid(row=0, column=col, pady=5, padx=2)
         
-        self.create_hist_table(self.username if self.Type == 'Customer' else "")
+        self.create_hist_table(self.username if self.user_type == 'Customer' else "")
         
     def create_hist_table(self, username):
         log_records = self.history.fetch_records(username)
@@ -659,7 +664,7 @@ class MenuManagementPage:
         
         # Add button to go back to the dashboard
         tk.Button(
-            main_window.window, text="Back to Dashboard", cursor="hand2", bg="#393939", fg="white", font=("Consolas", 10), activebackground="black", activeforeground="#E8E8E8", command=lambda: Dashboard('Admin', self.username)
+            main_window.window, text=BACK_TO_DASHBOARD, cursor="hand2", bg="#393939", fg="white", font=("Consolas", 10), activebackground="black", activeforeground="#E8E8E8", command=lambda: Dashboard('Admin', self.username)
         ).place(x=10, y=10)
 
         tk.Label(main_window.window, text="Menu Management", font=("Consolas", 16), bg="#1e1e1e", fg="#E8E8E8").pack(pady=(50, 20))
@@ -818,11 +823,11 @@ class MenuManagementPage:
                 if round(float(price), 0) <= 0 :
                     messagebox.showerror('Error', "Price must be greater than 0.")
                     return
-            except :
+            except ValueError:
                 messagebox.showerror('Error', "Price must be a number.")
                 return
             self.menu.save_item_sql(item_id, category, type_, name, price)
-            messagebox.showinfo("Success!", "Item has been successfully modified")
+            messagebox.showinfo(SUCCESS_MSG, "Item has been successfully modified")
     
     def create_item(self, category, type_, name, price) :
         if not category or not type_ or not name or not price:
@@ -833,14 +838,14 @@ class MenuManagementPage:
             if round(float(price), 0) <= 0 :
                 messagebox.showerror('Error', "Price must be greater than 0.")
                 return
-        except :
+        except ValueError:
             messagebox.showerror('Error', "Price must be a number.")
             return
         
         if not self.menu.create_item_sql(category, type_, name, price):
             messagebox.showerror("Error", "Item already exists!")
         else:
-            messagebox.showinfo("Success!", "Item has been successfully added") 
+            messagebox.showinfo(SUCCESS_MSG, "Item has been successfully added") 
             for widget in self.item_fields_frame.winfo_children():
                 widget.destroy()
             self.create_filters_panel()
@@ -852,10 +857,10 @@ class MenuManagementPage:
             self.filter_items(self.category_var.get(), self.type_var.get(), self.name_var.get())
 
 class CustomerBookPage:
-    def __init__(self, Type, username):
-        self.Type = Type
+    def __init__(self, user_type, username):
+        self.user_type = user_type
         self.username = username
-        self.accounts = script.Account(self.Type)
+        self.accounts = script.Account(self.user_type)
         main_window.rename_window_title('Customer Book')
         self.setup_ui()
     
@@ -864,7 +869,7 @@ class CustomerBookPage:
 
         # Add button to go back to the dashboard
         tk.Button(
-            main_window.window, text="Back to Dashboard", cursor="hand2", bg="#393939", fg="white", font=("Consolas", 10), activebackground="black", activeforeground="#E8E8E8", command=lambda: Dashboard(self.Type, self.username)
+            main_window.window, text=BACK_TO_DASHBOARD, cursor="hand2", bg="#393939", fg="white", font=("Consolas", 10), activebackground="black", activeforeground="#E8E8E8", command=lambda: Dashboard(self.user_type, self.username)
         ).place(x=10, y=10)
 
         # Title label below the button
@@ -884,9 +889,9 @@ class CustomerBookPage:
             tk.Label(self.log_frame, text=headers[col], width=18, font=("Consolas", 12, "bold"), 
                     fg="#e8e8e8", bg="#333333", borderwidth=1, relief='ridge').grid(row=0, column=col, pady=5, padx=2)
         
-        self.create_view_table(self.username if self.Type == 'Customer' else "")
+        self.create_view_table()
         
-    def create_view_table(self, username):
+    def create_view_table(self):
         log_records = self.accounts.get_customer_details()
 
         row = 1  # Start from row 1 to leave space for headers
