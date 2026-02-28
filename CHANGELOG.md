@@ -16,6 +16,9 @@ Transition from monolithic Python GUI to modern full-stack architecture.
 
 ## [Legacy - V1]
 
+### [1.3.1] - 28 Feb 2026
+- **Fixed**: Refactored code for efficient memory usage and enhanced readability.
+
 ### [1.3.0] - 19 Jun 2025
 - **Added**: Profile management (Edit password/phone/email), Admin Customer Book, Phone/Email fields.
 - **Modified**: Refined color scheme, moved logout to profile.
