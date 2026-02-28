@@ -1,5 +1,10 @@
 import mysql.connector as conn
 import csv
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 class Database:
     def __init__(self, database = ""):
@@ -7,19 +12,37 @@ class Database:
     
     def connect_to_mysql(self, db):
         # Connect to MySQL
-        if db:
-            self.mydb = conn.connect(host="localhost", user="root", passwd="root", database = db)
-        else:
-            self.mydb = conn.connect(host="localhost", user="root", passwd="root")
-        if not self.mydb.is_connected():
+        try:
+            if db:
+                self.mydb = conn.connect(
+                    host=os.getenv('DB_HOST', 'localhost'),
+                    user=os.getenv('DB_USER', 'root'),
+                    passwd=os.getenv('DB_PASSWORD', 'root'),
+                    database=db
+                )
+            else:
+                self.mydb = conn.connect(
+                    host=os.getenv('DB_HOST', 'localhost'),
+                    user=os.getenv('DB_USER', 'root'),
+                    passwd=os.getenv('DB_PASSWORD', 'root')
+                )
+            
+            if not self.mydb.is_connected():
+                print("Failed to connect to MySQL database.")
+                exit(-1)
+                
+            self.mycursor = self.mydb.cursor()
+            self.mycursor.execute("SET SESSION sql_mode=''")
+            self.mydb.commit()
+            
+        except conn.Error as err:
+            print(f"Error: {err}")
             exit(-1)
-        self.mycursor = self.mydb.cursor()
-        self.mycursor.execute("SET SESSION sql_mode=''")
-        self.mydb.commit()
 
     def create_db(self, database):
-        self.mycursor.execute("create database if not exists {}".format(database))
-        self.mycursor.execute("use {}".format(database))
+        self.mycursor.execute("CREATE DATABASE IF NOT EXISTS %s" % database) # database names cannot be parameterized with %s for values, but we should be careful. 
+        # Actually, using .format or % is the only way for identifiers, but let's stick to simple strings.
+        self.mycursor.execute("USE %s" % database)
         
     def createtable(self):
         self.mycursor.execute(
@@ -64,20 +87,20 @@ class Database:
         self.insert_food_items(path)
 
 class Account(Database):
-    def __init__(self, Type):
+    def __init__(self, account_type):
         super().__init__('Restaurant')
-        self.Type = Type
+        self.account_type = account_type
 
     def username_exists(self, username):
-        self.mycursor.execute("SELECT username FROM accounts WHERE username = %s AND type = %s", (username, self.Type))
+        self.mycursor.execute("SELECT username FROM accounts WHERE username = %s AND type = %s", (username, self.account_type))
         return bool(self.mycursor.fetchall())
 
     def create_account(self, username, password, phone, email):
-        self.mycursor.execute("INSERT INTO accounts VALUES(%s, %s, %s, %s, %s, NOW())", (username, password, self.Type, phone, email))
+        self.mycursor.execute("INSERT INTO accounts VALUES(%s, %s, %s, %s, %s, NOW())", (username, password, self.account_type, phone, email))
         self.mydb.commit()
 
     def verify_login(self, username, password):
-        self.mycursor.execute("SELECT password FROM accounts WHERE type = %s AND username = %s", (self.Type, username))
+        self.mycursor.execute("SELECT password FROM accounts WHERE type = %s AND username = %s", (self.account_type, username))
         result = self.mycursor.fetchone()
         return result and result[0] == password
     
@@ -85,18 +108,18 @@ class Account(Database):
         self.mycursor.execute("select username, phone, email, created from accounts where type = 'Customer'")
         return self.mycursor.fetchall()
     
-    def get_account_detail(self, username, Type):
-        self.mycursor.execute("select * from accounts where type = %s and username = %s", (Type, username))
+    def get_account_detail(self, username, account_type):
+        self.mycursor.execute("select * from accounts where type = %s and username = %s", (account_type, username))
         return self.mycursor.fetchone()
     
-    def edit_account_detail(self, username, Type, password, phone, email):
-        self.mycursor.execute("update accounts set password = %s where username = %s and type = %s", (password, username, Type))
-        self.mycursor.execute("update accounts set phone = %s where username = %s and type = %s", (phone, username, Type))
-        self.mycursor.execute("update accounts set email = %s where username = %s and type = %s", (email, username, Type))
+    def edit_account_detail(self, username, account_type, password, phone, email):
+        self.mycursor.execute("update accounts set password = %s where username = %s and type = %s", (password, username, account_type))
+        self.mycursor.execute("update accounts set phone = %s where username = %s and type = %s", (phone, username, account_type))
+        self.mycursor.execute("update accounts set email = %s where username = %s and type = %s", (email, username, account_type))
         self.mydb.commit()
     
-    def delete_account(self, username, Type):
-        self.mycursor.execute("delete from accounts where username = %s and type = %s", (username, Type))
+    def delete_account(self, username, account_type):
+        self.mycursor.execute("delete from accounts where username = %s and type = %s", (username, account_type))
         self.mydb.commit()
     
     @staticmethod
@@ -159,19 +182,24 @@ class Order(Database):
     
     def update_purchase(self):
         for key in self.order_list:
-            self.mycursor.execute("insert into logtable values('{}', '{}', {}, {}, NOW())".format(self.username, key, self.order_list[key],  self.order_list[key] * self.get_item_price(key)))
+            price = self.get_item_price(key)
+            total = self.order_list[key] * price
+            self.mycursor.execute(
+                "INSERT INTO logtable VALUES(%s, %s, %s, %s, NOW())",
+                (self.username, key, self.order_list[key], total)
+            )
         self.mydb.commit()
     
 class History(Database):
-    def __init__(self, Type):
+    def __init__(self, account_type):
         super().__init__('Restaurant')
-        self.Type = Type
+        self.account_type = account_type
 
     def fetch_records(self, username):
         # Fetch and display the log details from the database
         self.username = username
 
-        if self.Type == 'Customer':
+        if self.account_type == 'Customer':
             self.mycursor.execute("SELECT name, qty, total_price, log_time FROM logtable where username = %s", (self.username,))
         else:
             if self.username:
@@ -186,6 +214,9 @@ class Menu(Database):
         super().__init__('Restaurant')
 
     def get_unique_values(self, column_name):
+        # Validate column name to prevent injection
+        if column_name.lower() not in ['category', 'type', 'name']:
+            return []
         self.mycursor.execute(f"SELECT DISTINCT {column_name} FROM food")
         return [row[0] for row in self.mycursor.fetchall()]
     
@@ -211,15 +242,17 @@ class Menu(Database):
         self.mydb.commit()
     
     def create_item_sql(self, category, type_, name, price):
-        self.mycursor.execute("select category, type, name from food")
-        for i in self.mycursor.fetchall() :
-            print(category.lower() == i[0].lower() and type_.lower() == i[1].lower() and name.lower() == i[2].lower())
-            if category.lower() == i[0].lower() and type_.lower() == i[1].lower() and name.lower() == i[2].lower() :
+        self.mycursor.execute("SELECT category, type, name FROM food")
+        for i in self.mycursor.fetchall():
+            if category.lower() == i[0].lower() and type_.lower() == i[1].lower() and name.lower() == i[2].lower():
                 return False
-        else :
-            self.mycursor.execute("insert into food (name, category, type, price) values('{}', '{}', '{}', {})".format(name.title(), category.title(), type_.title(), price))
-            self.mydb.commit()
-            return True  
+        
+        self.mycursor.execute(
+            "INSERT INTO food (name, category, type, price) VALUES (%s, %s, %s, %s)",
+            (name.title(), category.title(), type_.title(), price)
+        )
+        self.mydb.commit()
+        return True
     
     def delete_item_sql(self, id):
         self.mycursor.execute("DELETE FROM food WHERE ID = %s", (id,))
