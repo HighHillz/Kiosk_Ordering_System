@@ -2,35 +2,28 @@
 
 All notable changes to this project will be noted here.
 
----
-
-## [Modern Web - V2]
+## 2 - Modern Web
 
 ### [2.0.0] - 28 Feb 2026
-Transition from monolithic Python GUI to modern full-stack architecture.
-- **Added**: FastAPI Backend, React Frontend (Kiosk & Admin), Dockerization, Nginx API Gateway, Redis Caching, Multi-tenancy.
-- **Modified**: Migrated core logic to REST API, standardized error handling.
-- **Removed**: Legacy Tkinter GUI dependency.
+Transforming a GUI application with a backend database system into a full-stack web application.
+Unlike Python, this app now uses FastAPI and React.
+Now it is possible to modify company branding and UI colour schemes depending on the restaurant's choice.
 
----
-
-## [Legacy - V1]
+## 1 - Legacy
 
 ### [1.3.1] - 27 Feb 2026
-- **Fixed**: Refactored code for efficient memory usage and enhanced readability.
+Code has been refactored for efficient memory usage and readability.
 
 ### [1.3.0] - 19 Jun 2025
-- **Added**: Profile management (Edit password/phone/email), Admin Customer Book, Phone/Email fields.
-- **Modified**: Refined color scheme, moved logout to profile.
-- **Fixed**: Dashboard case insensitivity issues.
+Profile management has been enhanced, giving options to edit information and add phone number or email address, which in case of completion can be used to contact the customer if needed. Moreover, colour schemes have been refined and some minor navigation changes have been made, improving user experience.
+Dashboard case insensitivity issues have been fixed, and usernames are now displayed correctly.
 
 ### [1.2.0] - 13 Jun 2025
-- **Added**: Customer dashboard, purchase history, account management.
-- **Modified**: UI layout improvements, window titles, responsive menu refresh.
-- **Fixed**: Input validation and menu update synchronization.
+Introducing account management features and some quality of life (QoL) upgrades. Main focus was on improving customers' user experience by adding a dashboard for each customer, tracking purchase history and ability to create accounts. Moreover, UI layout has been improved, seperate windows have their own titles and menu refresh becomes more responsive, helping in navigation and experience.
+Input validation and menu update synchronization has been fixed.
 
 ### [1.1.0] - 17 May 2025
-- **Added**: Unique Order ID generation.
+Added unique order ID generation system, enhancing the uniqueness of each order, helping in faster food order preparation and management.
 
 ### [1.0.0] - 30 Jan 2025
-- **Initial Release**: Home, Login, Ordering, Admin Dashboard, Menu Management, MySQL connectivity.
+Built the basic version of this application, providing all necassery features and interfaces for expected user experience.
