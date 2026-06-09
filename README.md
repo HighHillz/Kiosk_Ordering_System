@@ -2,6 +2,7 @@
 
 A desktop-based Restaurant Kiosk & Management system built using **Python**, **CustomTkinter**, and **MySQL**.
 
+![Version](https://img.shields.io/badge/Latest%20Version-1.3.1-blue)
 ![Status](https://img.shields.io/badge/Status-Deprecated-red)
 
 ## 🌟 Features
