@@ -1,9 +1,8 @@
-# Version 1 — Legacy
+# A2N Cafe
 
 A desktop-based Restaurant Kiosk & Management system built using **Python**, **CustomTkinter**, and **MySQL**.
 
-![Version](https://img.shields.io/badge/Latest%20Version-1.3.1-blue)
-![Status](https://img.shields.io/badge/Status-Deprecated-red)
+![Version](https://img.shields.io/badge/Version-1.3.1-blue)
 
 ## 🌟 Features
 
@@ -66,3 +65,9 @@ python ui.py
 ```
 
 *Note: On first run, the system will automatically create the `Restaurant` database, set up the required tables (`food`, `logtable`, `accounts`), and seed the initial menu from `Restaurant Menu - Food Items.csv`.*
+
+## Credits
+
+This project was built as a grade 12 Computer Science school project by me and two of my friends:
+- Naresh Kumar AP
+- Ananth S Mugundan
