@@ -2,8 +2,7 @@
 
 A modern, full-stack, containerized web-based Kiosk & Admin Dashboard system designed for scalability, performance, and customization.
 
-![Latest Version](https://img.shields.io/badge/Latest%20Version-2.0.0-blue.svg)
-![Status](https://img.shields.io/badge/Status-Inactive-yellow)
+![Version](https://img.shields.io/badge/Version-2.0.0-blue.svg)
 
 ## 🌟 Features
 
