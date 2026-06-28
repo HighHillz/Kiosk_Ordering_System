@@ -1,4 +1,4 @@
-# Version 2 — Modern Web
+# Kiosk Ordering System
 
 A modern, full-stack, containerized web-based Kiosk & Admin Dashboard system designed for scalability, performance, and customization.
 
